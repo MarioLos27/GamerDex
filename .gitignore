@@ -1,15 +1,119 @@
+# ============================================================================
+# GamerDex .gitignore - Proyecto Android Studio TFG
+# ============================================================================
+# Protege credenciales IGDB, archivos de build y configuración local
+
+# ============================================================================
+# Gradle
+# ============================================================================
+.gradle/
+build/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.jar
+*.war
+*.aar
+*.zip
+
+# ============================================================================
+# Android Studio / IntelliJ IDEA
+# ============================================================================
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+*.iws
+*.ipr
+*.swp
+*.swo
+*~
+*.bak
+
+# ============================================================================
+# Archivos de Credenciales (IMPORTANTE - NUNCA COMMITEAR)
+# ============================================================================
+# Token IGDB, Client ID, Access Token
+local.properties
+gradle.properties
+.env
+.env.local
+.env.*.local
+app/src/main/res/values/secrets.xml
+keystore.properties
+*.jks
+*.keystore
+
+# ============================================================================
+# Sistema y IDE
+# ============================================================================
 .DS_Store
+.classpath
+.project
+.settings/
+Thumbs.db
+Desktop.ini
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ============================================================================
+# Build y Generated
+# ============================================================================
 /build
 /captures
 .externalNativeBuild
-.cxx
-local.properties
+.cxx/
+gen/
+bin/
+out/
+lint-baseline.xml
+
+# ============================================================================
+# Tests y Coverage
+# ============================================================================
+test-results/
+.junit/
+coverage/
+*.ec
+*.exec
+
+# ============================================================================
+# Temporary Files
+# ============================================================================
+*.log
+*.orig
+*.rej
+.tmp
+.temp
+
+# ============================================================================
+# Database (Development)
+# ============================================================================
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# ============================================================================
+# macOS, Windows, Linux
+# ============================================================================
+._*
+.AppleDouble
+.LSOverride
+$RECYCLE.BIN/
+.directory
+
+# ============================================================================
+# Emulator y Device
+# ============================================================================
+.android/
+*.avd
+
+# ============================================================================
+# Archivos de Lock
+# ============================================================================
+*.lock
+# EXCEPTO gradle-wrapper
+!gradle-wrapper.jar
+!gradle-wrapper.properties

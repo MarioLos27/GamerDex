@@ -1,4 +1,4 @@
-package com.mariolos27.gamerdex.ui.theme
+package com.mariolos27.gamerdex.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

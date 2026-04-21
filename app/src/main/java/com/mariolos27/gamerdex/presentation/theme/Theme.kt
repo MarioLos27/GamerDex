@@ -1,4 +1,4 @@
-package com.mariolos27.gamerdex.ui.theme
+package com.mariolos27.gamerdex.presentation.theme
 
 import android.app.Activity
 import android.os.Build
@@ -10,6 +10,9 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.mariolos27.gamerdex.presentation.theme.color.*
+import androidx.compose.material3.Typography
+import com.mariolos27.gamerdex.presentation.theme.Typography
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
