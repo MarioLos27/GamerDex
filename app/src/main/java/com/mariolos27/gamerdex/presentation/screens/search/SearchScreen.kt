@@ -1,98 +1,104 @@
 package com.mariolos27.gamerdex.presentation.screens.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import com.mariolos27.gamerdex.domain.model.Game
+import com.mariolos27.gamerdex.presentation.components.ErrorStateContent
+import com.mariolos27.gamerdex.presentation.components.GameCard
+import com.mariolos27.gamerdex.presentation.components.GamerHeader
+import com.mariolos27.gamerdex.presentation.components.GamerSearchField
+import com.mariolos27.gamerdex.presentation.components.IdleStateContent
+import com.mariolos27.gamerdex.presentation.components.NoResultsStateContent
+import com.mariolos27.gamerdex.presentation.theme.DarkBackground
 
 /**
- * Pantalla de búsqueda de videojuegos.
+ * Pantalla de búsqueda de videojuegos - VERSIÓN GAMING PERSONALIZADA
  *
- * Arquitectura:
- * - Observa el estado del ViewModel reactivamente usando StateFlow
- * - Renderiza diferentes UI según el estado (Idle, Loading, Success, Error)
- * - Sin XML: 100% Jetpack Compose
- * - Inyección automática del ViewModel con Hilt
+ * Características:
+ * - Tema oscuro exclusivo con colores vibrantes gamer
+ * - Componentes personalizados con gradientes y animaciones
+ * - Arquitectura reactiva con StateFlow
+ * - 100% Jetpack Compose, sin XML
+ * - Inyección de dependencias con Hilt
  */
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
-    // Observar los estados del ViewModel
+    // Observar estados del ViewModel
     val uiState by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(DarkBackground)
     ) {
-        // Header
-        Text(
-            text = "🎮 Búsqueda de Juegos",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        // Header con gradient
+        GamerHeader()
 
-        // Campo de búsqueda
-        SearchTextField(
-            query = searchQuery,
-            onQueryChanged = { viewModel.onSearchQueryChanged(it) },
-            onSearch = { viewModel.searchGames() },
-            onClear = { viewModel.clearSearch() },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Mostrar contenido según el estado
-        Box(modifier = Modifier.fillMaxSize()) {
+        // Contenido principal
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(DarkBackground)
+        ) {
             when (uiState) {
                 is SearchUiState.Idle -> {
-                    IdleContent()
+                    IdleSearchContent(
+                        searchQuery = searchQuery,
+                        onQueryChanged = { viewModel.onSearchQueryChanged(it) },
+                        onSearch = { viewModel.searchGames() },
+                        onClear = { viewModel.clearSearch() }
+                    )
                 }
+
                 is SearchUiState.Loading -> {
-                    LoadingContent()
+                    LoadingSearchContent(
+                        searchQuery = searchQuery,
+                        onQueryChanged = { viewModel.onSearchQueryChanged(it) },
+                        onSearch = { viewModel.searchGames() },
+                        onClear = { viewModel.clearSearch() }
+                    )
                 }
+
                 is SearchUiState.Success -> {
-                    SuccessContent(games = (uiState as SearchUiState.Success).games)
+                    SuccessSearchContent(
+                        games = (uiState as SearchUiState.Success).games,
+                        searchQuery = searchQuery,
+                        onQueryChanged = { viewModel.onSearchQueryChanged(it) },
+                        onSearch = { viewModel.searchGames() },
+                        onClear = { viewModel.clearSearch() }
+                    )
                 }
+
                 is SearchUiState.Error -> {
-                    ErrorContent(message = (uiState as SearchUiState.Error).message)
+                    ErrorSearchContent(
+                        message = (uiState as SearchUiState.Error).message,
+                        searchQuery = searchQuery,
+                        onQueryChanged = { viewModel.onSearchQueryChanged(it) },
+                        onSearch = { viewModel.searchGames() },
+                        onClear = { viewModel.clearSearch() },
+                        onRetry = { viewModel.searchGames() }
+                    )
                 }
             }
         }
@@ -100,221 +106,155 @@ fun SearchScreen(
 }
 
 /**
- * Campo de texto para la búsqueda con icono de búsqueda y limpiar
+ * Estado Idle - Sin búsqueda
  */
 @Composable
-private fun SearchTextField(
-    query: String,
+private fun IdleSearchContent(
+    searchQuery: String,
     onQueryChanged: (String) -> Unit,
     onSearch: () -> Unit,
-    onClear: () -> Unit,
-    modifier: Modifier = Modifier
+    onClear: () -> Unit
 ) {
-    OutlinedTextField(
-        value = query,
-        onValueChange = onQueryChanged,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        placeholder = { Text("Busca un juego...") },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Buscar"
-            )
-        },
-        trailingIcon = {
-            if (query.isNotEmpty()) {
-                IconButton(onClick = onClear) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = "Limpiar"
-                    )
-                }
-            }
-        },
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp)
-    )
-}
-
-/**
- * Estado Idle: Sin búsqueda activa
- */
-@Composable
-private fun IdleContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .background(DarkBackground)
     ) {
-        Text(
-            text = "🔍",
-            style = MaterialTheme.typography.displayLarge
+        // Campo de búsqueda
+        GamerSearchField(
+            query = searchQuery,
+            onQueryChanged = onQueryChanged,
+            onSearch = onSearch,
+            onClear = onClear,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Busca tu juego favorito",
-            style = MaterialTheme.typography.titleMedium
-        )
-        Text(
-            text = "Escribe el nombre del juego arriba",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
 
-/**
- * Estado Loading: Búsqueda en progreso
- */
-@Composable
-private fun LoadingContent() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-/**
- * Estado Success: Mostrar resultados
- */
-@Composable
-private fun SuccessContent(games: List<Game>) {
-    if (games.isEmpty()) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "No se encontraron resultados",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-    } else {
-        LazyColumn(
-            contentPadding = PaddingValues(vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(games) { game ->
-                GameCard(game = game)
-            }
-        }
-    }
-}
-
-/**
- * Estado Error: Mostrar mensaje de error
- */
-@Composable
-private fun ErrorContent(message: String) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(24.dp)
-        ) {
-            Text(
-                text = "❌",
-                style = MaterialTheme.typography.displayMedium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Error en la búsqueda",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error
-            )
-        }
-    }
-}
-
-/**
- * Tarjeta individual de juego
- * Muestra la portada (usando Coil AsyncImage) y el título
- */
-@Composable
-private fun GameCard(game: Game) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp)
-    ) {
-        Row(
+        // Contenido central
+        IdleStateContent(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Portada del juego usando Coil
-            Box(
-                modifier = Modifier
-                    .size(100.dp, 100.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .align(Alignment.CenterVertically)
-            ) {
-                if (game.coverUrl != null) {
-                    AsyncImage(
-                        model = game.coverUrl,
-                        contentDescription = game.title,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    // Placeholder si no hay imagen
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .align(Alignment.Center),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "📦",
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                    }
-                }
-            }
+        )
+    }
+}
 
-            // Información del juego
-            Column(
+/**
+ * Estado Loading - Búsqueda en progreso
+ */
+@Composable
+private fun LoadingSearchContent(
+    searchQuery: String,
+    onQueryChanged: (String) -> Unit,
+    onSearch: () -> Unit,
+    onClear: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBackground)
+    ) {
+        // Campo de búsqueda
+        GamerSearchField(
+            query = searchQuery,
+            onQueryChanged = onQueryChanged,
+            onSearch = onSearch,
+            onClear = onClear,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+        )
+
+        // Spinner de carga
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+}
+
+/**
+ * Estado Success - Mostrar resultados
+ */
+@Composable
+private fun SuccessSearchContent(
+    games: List<com.mariolos27.gamerdex.domain.model.Game>,
+    searchQuery: String,
+    onQueryChanged: (String) -> Unit,
+    onSearch: () -> Unit,
+    onClear: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBackground)
+    ) {
+        // Campo de búsqueda
+        GamerSearchField(
+            query = searchQuery,
+            onQueryChanged = onQueryChanged,
+            onSearch = onSearch,
+            onClear = onClear,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Lista de resultados
+        if (games.isEmpty()) {
+            NoResultsStateContent(
+                query = searchQuery,
                 modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically),
-                verticalArrangement = Arrangement.Center
+                    .fillMaxSize()
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(DarkBackground),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = game.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "ID: ${game.id}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                items(games) { game ->
+                    GameCard(game = game)
+                }
             }
         }
     }
 }
 
 /**
- * Preview para ver la pantalla de búsqueda en modo oscuro/claro
+ * Estado Error - Mostrar error
  */
 @Composable
-fun SearchScreenPreview() {
-    SearchScreen()
+private fun ErrorSearchContent(
+    message: String,
+    searchQuery: String,
+    onQueryChanged: (String) -> Unit,
+    onSearch: () -> Unit,
+    onClear: () -> Unit,
+    onRetry: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBackground)
+    ) {
+        // Campo de búsqueda
+        GamerSearchField(
+            query = searchQuery,
+            onQueryChanged = onQueryChanged,
+            onSearch = onSearch,
+            onClear = onClear,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+        )
+
+        // Contenido de error
+        ErrorStateContent(
+            message = message,
+            onRetry = onRetry,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+    }
 }
 

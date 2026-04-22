@@ -2,6 +2,33 @@ package com.mariolos27.gamerdex.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
+// ========== PALETA GAMER OSCURA PERSONALIZADA ==========
+
+// Colores primarios - Tonos vibrantes gaming
+val GamerPurple = Color(0xFF7C3AED)      // Púrpura vibrante
+val GamerCyan = Color(0xFF06B6D4)        // Cyan brillante
+val GamerPink = Color(0xFFEC4899)        // Rosa neón
+
+// Colores de fondo - Dark mode elegante
+val DarkBackground = Color(0xFF0F172A)   // Casi negro profundo
+val DarkSurface = Color(0xFF1E293B)      // Gris oscuro para tarjetas
+val DarkSurfaceVariant = Color(0xFF334155) // Gris más claro
+
+// Colores de texto
+val TextPrimary = Color(0xFFFFFFFF)      // Blanco puro
+val TextSecondary = Color(0xFFA1A5B4)    // Gris claro
+val TextTertiary = Color(0xFF64748B)     // Gris medio
+
+// Colores de acento
+val AccentGreen = Color(0xFF10B981)      // Verde éxito
+val AccentRed = Color(0xFFEF4444)        // Rojo error
+val AccentYellow = Color(0xFFFCD34D)     // Amarillo warning
+
+// Colores gradient gaming
+val GradientStart = Color(0xFF7C3AED)    // Púrpura
+val GradientEnd = Color(0xFF06B6D4)      // Cyan
+
+// Deprecated: Colores legacy (mantener para compatibilidad)
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)

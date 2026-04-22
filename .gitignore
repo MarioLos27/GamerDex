@@ -29,6 +29,7 @@ build/
 *.swo
 *~
 *.bak
+*.hprof
 
 # ============================================================================
 # Archivos de Credenciales (IMPORTANTE - NUNCA COMMITEAR)
@@ -117,3 +118,20 @@ $RECYCLE.BIN/
 # EXCEPTO gradle-wrapper
 !gradle-wrapper.jar
 !gradle-wrapper.properties
+
+# ============================================================================
+# Documentación Interna (NO VERSIONAR)
+# ============================================================================
+# Archivos .md de documentación interna, setup, instrucciones
+# Solo README.md se mantiene como punto de entrada estándar
+CHECKLIST.md
+SETUP_GUIDE.md
+VERTICAL_SLICE_SEARCH.md
+QUICK_REFERENCE.md
+IMPLEMENTATION_SUMMARY.md
+AGENTS.md
+SECURITY_CREDENTIALS.md
+GITIGNORE_SUMMARY.md
+GIT_COMMANDS.md
+GITIGNORE_IMPLEMENTATION_SUMMARY.md
+DOCUMENTATION_INDEX.md
